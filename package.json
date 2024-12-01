@@ -1,0 +1,26 @@
+{
+    "name": "iut-rcc-grades-tracker",
+    "version": "1.0.0",
+    "private": true,
+    "author": "LockBlock-dev",
+    "license": "AGPL-3.0-or-later",
+    "scripts": {
+        "start": "node dist/main.js",
+        "build": "tsc"
+    },
+    "dependencies": {
+        "cheerio": "^1.0.0",
+        "cookie": "^1.0.2",
+        "dotenv": "^16.4.5",
+        "luxon": "^3.5.0",
+        "simple-discord-webhooks": "^2.1.0",
+        "undici": "^7.0.0"
+    },
+    "devDependencies": {
+        "@types/cheerio": "^0.22.35",
+        "@types/luxon": "^3.4.2",
+        "@types/node": "^22.10.1",
+        "discord-api-types": "^0.37.110",
+        "tsx": "^4.19.2"
+    }
+}
