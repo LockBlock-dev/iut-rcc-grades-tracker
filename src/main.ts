@@ -7,8 +7,8 @@ import {
     IntranetClient,
     IntranetNotLoggedInError,
 } from "./intranet";
-import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile, writeFile, access, mkdir } from "node:fs/promises";
+import { dirname } from "path";
 import { APIEmbed } from "discord-api-types/v10";
 
 type HashedGrade = Grade & {
@@ -44,6 +44,15 @@ const hashNotes = (notes: Grades) => {
     });
 };
 
+const fileExists = async (filePath: string) => {
+    try {
+        await access(filePath);
+        return true;
+    } catch {
+        return false;
+    }
+};
+
 const log = (msg: string) => console.log(`${new Date().toISOString()}: ${msg}`);
 const err = (err: unknown) => console.error(new Date().toISOString(), err);
 
@@ -74,7 +83,7 @@ const loginWithRetries = async (client: IntranetClient) => {
 const fetchAndUpdateGrades = async (
     client: IntranetClient,
     slug: string,
-    embed: APIEmbed
+    embed: APIEmbed,
 ) => {
     log("Fetching grades...");
 
@@ -83,17 +92,21 @@ const fetchAndUpdateGrades = async (
 
     hashNotes(grades);
 
-    if (!existsSync(savePath)) {
+    if (!(await fileExists(savePath))) {
+        const dirPath = dirname(savePath);
+
+        await mkdir(dirPath, { recursive: true });
+
         await writeFile(savePath, JSON.stringify(grades), {
             encoding: "utf-8",
         });
     }
 
     const oldGrades: HashedGrades = JSON.parse(
-        await readFile(savePath, { encoding: "utf-8" })
+        await readFile(savePath, { encoding: "utf-8" }),
     );
     const newGrades = (grades as HashedGrades).filter(
-        (n) => !oldGrades.some((o) => o.hash === n.hash)
+        (n) => !oldGrades.some((o) => o.hash === n.hash),
     );
 
     if (newGrades.length > 0) {
@@ -140,7 +153,7 @@ const main = async () => {
                 const updatedEmbed = await fetchAndUpdateGrades(
                     client,
                     slug,
-                    embed
+                    embed,
                 );
 
                 if (updatedEmbed.fields!.length > 0) {

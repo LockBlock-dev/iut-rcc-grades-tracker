@@ -1,4 +1,4 @@
-import cookie from "cookie";
+import * as cookie from "cookie";
 import * as cheerio from "cheerio";
 
 import { CAS } from "../cas";
@@ -39,7 +39,7 @@ class IntranetClient {
 
         if (!setCookie)
             throw new IntranetError(
-                "Could not get Intranet PHPSESSID cookie 1/2!"
+                "Could not get Intranet PHPSESSID cookie 1/2!",
             );
 
         let maybePHPSESSID = (
@@ -48,14 +48,14 @@ class IntranetClient {
 
         if (!maybePHPSESSID)
             throw new IntranetError(
-                "Could not get Intranet PHPSESSID cookie 1/2!"
+                "Could not get Intranet PHPSESSID cookie 1/2!",
             );
 
         const { PHPSESSID } = cookie.parse(maybePHPSESSID);
 
         if (!PHPSESSID)
             throw new IntranetError(
-                "Could not get Intranet PHPSESSID cookie 1/2!"
+                "Could not get Intranet PHPSESSID cookie 1/2!",
             );
 
         resp = await HttpClient.get({
@@ -69,7 +69,7 @@ class IntranetClient {
 
         if (!setCookie)
             throw new IntranetError(
-                "Could not get Intranet PHPSESSID cookie 2/2!"
+                "Could not get Intranet PHPSESSID cookie 2/2!",
             );
 
         maybePHPSESSID = (
@@ -78,14 +78,14 @@ class IntranetClient {
 
         if (!maybePHPSESSID)
             throw new IntranetError(
-                "Could not get Intranet PHPSESSID cookie 2/2!"
+                "Could not get Intranet PHPSESSID cookie 2/2!",
             );
 
         let { PHPSESSID: PHPSESSID2 } = cookie.parse(maybePHPSESSID);
 
         if (!PHPSESSID2)
             throw new IntranetError(
-                "Could not get Intranet PHPSESSID cookie 2/2!"
+                "Could not get Intranet PHPSESSID cookie 2/2!",
             );
 
         this.PHPSESSID = PHPSESSID2;
@@ -108,7 +108,7 @@ class IntranetClient {
                 throw new IntranetError(
                     `Could not GET your profile page: ${
                         new HttpError(resp).message
-                    }`
+                    }`,
                 );
         }
 
@@ -142,7 +142,7 @@ class IntranetClient {
                 throw new IntranetError(
                     `Could not GET your about me page: ${
                         new HttpError(resp).message
-                    }`
+                    }`,
                 );
         }
 
@@ -155,7 +155,7 @@ class IntranetClient {
 
     public async getUserProfile(
         slug: string,
-        userType: UserType = UserType.STUDENT
+        userType: UserType = UserType.STUDENT,
     ) {
         if (!this.PHPSESSID) throw new IntranetNotLoggedInError();
 
@@ -169,7 +169,7 @@ class IntranetClient {
                 throw new IntranetError(
                     `Could not GET user profile page: ${
                         new HttpError(resp).message
-                    }`
+                    }`,
                 );
         }
 
@@ -193,7 +193,7 @@ class IntranetClient {
                 throw new IntranetError(
                     `Could not GET your grades page: ${
                         new HttpError(resp).message
-                    }`
+                    }`,
                 );
         }
 
@@ -221,7 +221,7 @@ class IntranetClient {
                                 and parse it as a float.
                                 */
                                 const grade = parseFloat(
-                                    _data.replace(",", ".")
+                                    _data.replace(",", "."),
                                 );
 
                                 if (isNaN(grade)) return null;
@@ -232,7 +232,7 @@ class IntranetClient {
                                 return DateTime.fromFormat(
                                     _data,
                                     "d LLLL yyyy",
-                                    { locale: "fr" }
+                                    { locale: "fr" },
                                 );
                             }
                             case "html": {
@@ -249,8 +249,8 @@ class IntranetClient {
                             ...acc,
                             [GRADES_HEADERS[idx].name]: val,
                         }),
-                        {}
-                    )
+                        {},
+                    ),
             )
             .get() as Grades;
     }
@@ -268,7 +268,7 @@ class IntranetClient {
                 throw new IntranetError(
                     `Could not GET your classmates page: ${
                         new HttpError(resp).message
-                    }`
+                    }`,
                 );
         }
 
