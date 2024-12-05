@@ -166,7 +166,14 @@ const main = async () => {
                 if (e instanceof IntranetNotLoggedInError) {
                     err("Session expired, attempting to re-login...");
 
-                    await loginWithRetries(client);
+                    try {
+                        await loginWithRetries(client);
+                        log("Re-login successful. Resuming fetch...");
+                        continue;
+                    } catch (reLoginError) {
+                        err(`Re-login failed: ${reLoginError}`);
+                        break;
+                    }
                 } else {
                     err(e);
 
