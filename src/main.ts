@@ -20,7 +20,7 @@ const TIMEOUT = (parseInt(process.env.TIMEOUT!) || 14400) * 1000;
 const MAX_RETRY = parseInt(process.env.LOGIN_RETRY_MAX!) || 3;
 const LOGIN_RETRY_DELAY =
     (parseInt(process.env.LOGIN_RETRY_DELAY!) || 3000) * 1000;
-const EMBED: APIEmbed = {
+const BASE_EMBED: APIEmbed = {
     title: "Nouvelle(s) note(s) disponible(s) !",
     color: 0x06d6a0,
     thumbnail: {
@@ -34,13 +34,15 @@ const EMBED: APIEmbed = {
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-const hashNotes = (notes: Grades) => {
-    notes.forEach((n) => {
+const hashGrades = (grades: Grades): HashedGrades => {
+    return grades.map((n) => {
         Object.defineProperty(n, "hash", {
             value: createHash("sha1")
                 .update(JSON.stringify(n))
                 .digest("base64"),
         });
+
+        return n as HashedGrade;
     });
 };
 
@@ -83,14 +85,14 @@ const loginWithRetries = async (client: IntranetClient) => {
 const fetchAndUpdateGrades = async (
     client: IntranetClient,
     slug: string,
-    embed: APIEmbed,
+    embed: APIEmbed
 ) => {
     log("Fetching grades...");
 
-    const grades = await client.getGrades(slug);
+    let grades = await client.getGrades(slug);
     const savePath = process.env.SAVE_PATH!;
 
-    hashNotes(grades);
+    grades = hashGrades(grades);
 
     if (!(await fileExists(savePath))) {
         const dirPath = dirname(savePath);
@@ -103,10 +105,10 @@ const fetchAndUpdateGrades = async (
     }
 
     const oldGrades: HashedGrades = JSON.parse(
-        await readFile(savePath, { encoding: "utf-8" }),
+        await readFile(savePath, { encoding: "utf-8" })
     );
     const newGrades = (grades as HashedGrades).filter(
-        (n) => !oldGrades.some((o) => o.hash === n.hash),
+        (n) => !oldGrades.some((o) => o.hash === n.hash)
     );
 
     if (newGrades.length > 0) {
@@ -147,13 +149,13 @@ const main = async () => {
         if (!slug) throw new Error("Failed to retrieve user slug.");
 
         while (true) {
-            const embed = Object.assign({}, EMBED);
+            const embed = structuredClone(BASE_EMBED);
 
             try {
                 const updatedEmbed = await fetchAndUpdateGrades(
                     client,
                     slug,
-                    embed,
+                    embed
                 );
 
                 if (updatedEmbed.fields!.length > 0) {
