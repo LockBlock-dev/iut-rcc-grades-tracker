@@ -35,15 +35,10 @@ const BASE_EMBED: APIEmbed = {
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const hashGrades = (grades: Grades): HashedGrades => {
-    return grades.map((n) => {
-        Object.defineProperty(n, "hash", {
-            value: createHash("sha1")
-                .update(JSON.stringify(n))
-                .digest("base64"),
-        });
-
-        return n as HashedGrade;
-    });
+    return grades.map((n) => ({
+        ...n,
+        hash: createHash("sha1").update(JSON.stringify(n)).digest("base64"),
+    }));
 };
 
 const fileExists = async (filePath: string) => {
@@ -85,14 +80,12 @@ const loginWithRetries = async (client: IntranetClient) => {
 const fetchAndUpdateGrades = async (
     client: IntranetClient,
     slug: string,
-    embed: APIEmbed
+    embed: APIEmbed,
 ) => {
     log("Fetching grades...");
 
-    let grades = await client.getGrades(slug);
+    const grades = hashGrades(await client.getGrades(slug));
     const savePath = process.env.SAVE_PATH!;
-
-    grades = hashGrades(grades);
 
     if (!(await fileExists(savePath))) {
         const dirPath = dirname(savePath);
@@ -105,10 +98,11 @@ const fetchAndUpdateGrades = async (
     }
 
     const oldGrades: HashedGrades = JSON.parse(
-        await readFile(savePath, { encoding: "utf-8" })
+        await readFile(savePath, { encoding: "utf-8" }),
     );
+
     const newGrades = (grades as HashedGrades).filter(
-        (n) => !oldGrades.some((o) => o.hash === n.hash)
+        (n) => !oldGrades.some((o) => o.hash === n.hash),
     );
 
     if (newGrades.length > 0) {
@@ -155,7 +149,7 @@ const main = async () => {
                 const updatedEmbed = await fetchAndUpdateGrades(
                     client,
                     slug,
-                    embed
+                    embed,
                 );
 
                 if (updatedEmbed.fields!.length > 0) {
