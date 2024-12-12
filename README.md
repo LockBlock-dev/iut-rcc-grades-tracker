@@ -1,6 +1,8 @@
 # IUT RCC Grades Tracker
 
-Grades tracker for the [IUT RCC university website](https://iut-rcc-intranet.univ-reims.fr/)
+A tool to automatically fetch your grades from the [IUT RCC university portal](https://iut-rcc-intranet.univ-reims.fr/) and send a detailed summary to your Discord.
+
+The tracker periodically retrieves your new grades and delivers them in an easy-to-read Discord embed format, keeping you informed of your academic progress.
 
 ## Table of Contents
 
@@ -16,7 +18,7 @@ You can [use Docker](#docker) or install this app manually. Here's how:
 
 1. Install [Node.js](https://nodejs.org/).
 2. Download or clone the project.
-3. Navigate to the project directory:
+3. Navigate to the project directory.
 4. Install the dependencies:
     ```sh
     npm install

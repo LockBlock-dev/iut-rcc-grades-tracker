@@ -1,5 +1,6 @@
 {
     "name": "iut-rcc-grades-tracker",
+    "description": "Grades tracker for the IUT RCC university website.",
     "version": "2.1.0",
     "private": true,
     "author": "LockBlock-dev",
