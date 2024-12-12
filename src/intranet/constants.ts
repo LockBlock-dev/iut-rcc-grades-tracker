@@ -1,4 +1,4 @@
-import { GradesHeaders, GradesHeaderType } from "./types";
+import { type GradesHeaders, GradesHeaderType } from "./types";
 
 export const GRADES_HEADERS: GradesHeaders = [
     {

@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 import { CAS } from "../cas";
 import { HttpClient, HttpError } from "../http";
 import { IntranetError, IntranetNotLoggedInError } from "./errors";
-import { Grades, UserType } from "./types";
+import { type Grades, UserType, Language } from "./types";
 import { DateTime } from "luxon";
 import { GRADES_HEADERS } from "./constants";
 
@@ -19,7 +19,7 @@ class IntranetClient {
         this.cas = new CAS(`${this.url}${process.env.SERVICE_CAS_PATH}`);
         this.PHPSESSID = PHPSESSID;
 
-        this.http = new HttpClient(`${this.url}/fr`, {
+        this.http = new HttpClient(`${this.url}/${Language.FRENCH}`, {
             Cookie: `PHPSESSID=${this.PHPSESSID}`,
         });
     }
@@ -95,6 +95,9 @@ class IntranetClient {
         return this.PHPSESSID;
     }
 
+    /**
+     * @see {@link https://github.com/Dannebicque/intranetV3/blob/9a54f2bbe2a741960c5fafb6a132ff8d9d05cf8d/templates/user/profil.html.twig}
+     */
     public async getMySlug() {
         if (!this.PHPSESSID) throw new IntranetNotLoggedInError();
 
@@ -125,6 +128,9 @@ class IntranetClient {
         return slug;
     }
 
+    /**
+     * @see {@link https://github.com/Dannebicque/intranetV3/blob/9a54f2bbe2a741960c5fafb6a132ff8d9d05cf8d/templates/user/composants/_apropos.html.twig}
+     */
     public async getMyAboutMe() {
         if (!this.PHPSESSID) throw new IntranetNotLoggedInError();
 
@@ -153,6 +159,9 @@ class IntranetClient {
         return $("body").text();
     }
 
+    /**
+     * @see {@link https://github.com/Dannebicque/intranetV3/blob/9a54f2bbe2a741960c5fafb6a132ff8d9d05cf8d/templates/user/profil.html.twig}
+     */
     public async getUserProfile(
         slug: string,
         userType: UserType = UserType.STUDENT,
@@ -180,6 +189,9 @@ class IntranetClient {
         return $("body").text();
     }
 
+    /**
+     * @see {@link https://github.com/Dannebicque/intranetV3/blob/9a54f2bbe2a741960c5fafb6a132ff8d9d05cf8d/templates/user/composants/_notes.html.twig}
+     */
     public async getGrades(slug: string) {
         if (!this.PHPSESSID) throw new IntranetNotLoggedInError();
 
@@ -255,11 +267,16 @@ class IntranetClient {
             .get() as Grades;
     }
 
-    public async getClassmates(semesterNumber: number, groupType: number) {
+    /**
+     * @see {@link https://github.com/Dannebicque/intranetV3/blob/9a54f2bbe2a741960c5fafb6a132ff8d9d05cf8d/templates/trombinoscope/trombiEtudiant.html.twig}
+     */
+    public async getClassmates(semesterNumber: number, groupType?: number) {
         if (!this.PHPSESSID) throw new IntranetNotLoggedInError();
 
         const resp = await this.http.get({
-            path: `/trombinoscope/etudiant/${semesterNumber}/${groupType}`,
+            path: `/trombinoscope/${UserType.STUDENT}/${semesterNumber}${
+                groupType ? `/${groupType}` : ""
+            }`,
         });
 
         if (!resp.ok) {

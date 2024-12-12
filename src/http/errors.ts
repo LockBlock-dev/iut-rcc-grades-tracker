@@ -1,5 +1,5 @@
 import { type Dispatcher } from "undici";
-import { Response } from "./types.js";
+import { type Response } from "./types.js";
 
 export class HttpError extends Error {
     status: number;

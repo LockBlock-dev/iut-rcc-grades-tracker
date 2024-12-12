@@ -1,4 +1,9 @@
-import { DateTime } from "luxon";
+import { type DateTime } from "luxon";
+
+export enum Language {
+    FRENCH = "fr",
+    ENGLISH = "en",
+}
 
 export enum UserType {
     STUDENT = "etudiant",
