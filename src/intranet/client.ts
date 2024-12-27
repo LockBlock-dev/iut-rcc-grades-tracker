@@ -236,7 +236,8 @@ class IntranetClient {
                                     _data.replace(",", "."),
                                 );
 
-                                if (isNaN(grade)) return null;
+                                // Default grade on the Intranet website
+                                if (isNaN(grade)) return -0.01;
 
                                 return grade;
                             }
