@@ -4,7 +4,7 @@ import * as cheerio from "cheerio";
 import { CAS } from "../cas";
 import { HttpClient, HttpError } from "../http";
 import { IntranetError, IntranetNotLoggedInError } from "./errors";
-import { type Grades, UserType, Language } from "./types";
+import { type Grades, UserType, Language, GradesHeaderName } from "./types";
 import { DateTime } from "luxon";
 import { GRADES_HEADERS } from "./constants";
 
@@ -195,6 +195,8 @@ class IntranetClient {
     public async getGrades(slug: string) {
         if (!this.PHPSESSID) throw new IntranetNotLoggedInError();
 
+        const gradesHeaderNames = Object.values(GradesHeaderName);
+
         const resp = await this.http.get({
             path: `/etudiant/profil/${slug}/notes`,
         });
@@ -265,7 +267,12 @@ class IntranetClient {
                         {},
                     ),
             )
-            .get() as Grades;
+            .get()
+            .filter(
+                (grade) =>
+                    grade[GradesHeaderName.Grade] !== undefined &&
+                    grade[GradesHeaderName.Date] !== undefined,
+            ) as Grades;
     }
 
     /**

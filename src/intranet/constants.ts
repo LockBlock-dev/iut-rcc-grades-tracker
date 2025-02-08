@@ -1,8 +1,12 @@
-import { type GradesHeaders, GradesHeaderType } from "./types";
+import {
+    type GradesHeaders,
+    GradesHeaderName,
+    GradesHeaderType,
+} from "./types";
 
 export const GRADES_HEADERS: GradesHeaders = [
     {
-        name: "subject",
+        name: GradesHeaderName.Subject,
         type: GradesHeaderType.HTML,
         get: (el) => {
             return {
@@ -11,13 +15,13 @@ export const GRADES_HEADERS: GradesHeaders = [
             };
         },
     },
-    { name: "evaluation", type: GradesHeaderType.STRING },
-    { name: "date", type: GradesHeaderType.DATE },
-    { name: "comment", type: GradesHeaderType.STRING },
-    { name: "grade", type: GradesHeaderType.NUMBER },
-    { name: "coefficient", type: GradesHeaderType.NUMBER },
+    { name: GradesHeaderName.Evaluation, type: GradesHeaderType.STRING },
+    { name: GradesHeaderName.Date, type: GradesHeaderType.DATE },
+    { name: GradesHeaderName.Comment, type: GradesHeaderType.STRING },
+    { name: GradesHeaderName.Grade, type: GradesHeaderType.NUMBER },
+    { name: GradesHeaderName.Coefficient, type: GradesHeaderType.NUMBER },
     {
-        name: "id",
+        name: GradesHeaderName.Id,
         type: GradesHeaderType.HTML,
         get: (el) => {
             const gradeLink =

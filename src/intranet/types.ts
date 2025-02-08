@@ -10,6 +10,16 @@ export enum UserType {
     STAFF = "personnel",
 }
 
+export enum GradesHeaderName {
+    Subject = "subject",
+    Evaluation = "evaluation",
+    Date = "date",
+    Comment = "comment",
+    Grade = "grade",
+    Coefficient = "coefficient",
+    Id = "id",
+}
+
 export enum GradesHeaderType {
     STRING = "string",
     NUMBER = "number",
@@ -18,7 +28,7 @@ export enum GradesHeaderType {
 }
 
 interface GradesHeader<T = Exclude<GradesHeaderType, GradesHeaderType.HTML>> {
-    name: string;
+    name: GradesHeaderName;
     type: T;
 }
 
