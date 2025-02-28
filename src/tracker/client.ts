@@ -7,9 +7,9 @@ import {
 } from "../intranet";
 import { readFile, writeFile, access, mkdir } from "node:fs/promises";
 import { dirname } from "path";
-import { HashedGrades } from "./types";
+import type { HashedGrades } from "./types";
 import { BASE_EMBED, LOGIN_RETRY_DELAY, MAX_RETRY, TIMEOUT } from "./constants";
-import { APIEmbed } from "discord-api-types/v10";
+import type { APIEmbed } from "discord-api-types/v10";
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
